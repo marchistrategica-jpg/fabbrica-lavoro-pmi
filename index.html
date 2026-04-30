@@ -660,8 +660,12 @@ window.startNew = async function startNew() {
     sessionStorage.setItem('fl_draft_id', _draftId);
     sessionStorage.setItem('fl_draft_code', _draftCode);
 
+    // Reset button
+    btn.textContent = 'Inizia il questionario';
+    btn.disabled = false;
+
     // Show code modal before proceeding
-    window.showCodeModal(_draftCode, _draftId, data.azienda);
+    window.showCodeModal(_draftCode, _draftId);
 
   } catch(e) {
     console.error('Errore creazione bozza:', e);
