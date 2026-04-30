@@ -621,8 +621,9 @@ const _app = initializeApp(firebaseConfig);
 const _db  = getFirestore(_app);
 
 // Current draft ID (set when starting new or resuming)
-let _draftId = null;
-let _draftCode = null;
+// Persist draftId across page refreshes using sessionStorage
+let _draftId = sessionStorage.getItem('fl_draft_id') || null;
+let _draftCode = sessionStorage.getItem('fl_draft_code') || null;
 
 // Check URL for draft ID on page load
 function checkUrlDraft() {
@@ -653,12 +654,14 @@ window.startNew = async function startNew() {
 
     const docRef = await addDoc(collection(_db, "questionari"), data);
     _draftId = docRef.id;
-
-    // Generate short readable code from doc ID
     _draftCode = _draftId.substring(0, 8).toUpperCase();
 
+    // Persist in session so refresh doesn't create a new draft
+    sessionStorage.setItem('fl_draft_id', _draftId);
+    sessionStorage.setItem('fl_draft_code', _draftCode);
+
     // Show code modal before proceeding
-    showCodeModal(_draftCode, _draftId, data.azienda);
+    window.showCodeModal(_draftCode, _draftId, data.azienda);
 
   } catch(e) {
     console.error('Errore creazione bozza:', e);
@@ -691,8 +694,8 @@ window.copyCode = function() {
 window.proceedFromCode = function() {
   document.getElementById('codeModalOverlay').classList.remove('open');
   const btn = document.querySelector('#step-0 .btn-green');
-  if (btn) { btn.textContent = 'Inizia il questionario'; btn.disabled = false; }
-  goTo(1);
+  if (btn) { btn.innerHTML = 'Inizia il questionario'; btn.disabled = false; }
+  window.goTo(1);
 };
 
 window.resumeDraft = async function resumeDraft() {
@@ -709,6 +712,7 @@ window.resumeDraft = async function resumeDraft() {
     }
     document.getElementById('resumeError').style.display = 'none';
     _draftId = code;
+    sessionStorage.setItem('fl_draft_id', _draftId);
     const data = docSnap.data();
 
     // Restore basic fields
@@ -716,10 +720,8 @@ window.resumeDraft = async function resumeDraft() {
     if (data.partitaIva && data.partitaIva !== '—') document.getElementById('az_piva').value     = data.partitaIva;
     if (data.nDipendenti && data.nDipendenti !== '—') document.getElementById('az_dip').value    = data.nDipendenti;
     if (data.delegato  && data.delegato  !== '—') document.getElementById('az_delegato').value   = data.delegato;
-    if (data.az_email) document.getElementById('az_email').value = data.az_email;
-
     const step = data.stepCorrente || 1;
-    goTo(step);
+    window.goTo(step);
     console.log('✅ Bozza ripresa:', code, '- step', step);
   } catch(e) {
     document.getElementById('resumeError').style.display = 'block';
@@ -761,12 +763,30 @@ async function saveQuestionario(data) {
 
 // Check URL for draft ID on load
 window.addEventListener('DOMContentLoaded', () => {
+  // Check URL param first
   const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-  if (id) {
-    document.getElementById('resumeCode').value = id;
-    // Auto-trigger resume
-    setTimeout(() => resumeDraft(), 300);
+  const urlId = params.get('id');
+  if (urlId) {
+    document.getElementById('resumeCode').value = urlId;
+    setTimeout(() => window.resumeDraft(), 400);
+    return;
+  }
+
+  // Check session storage - if draft already exists, show it in resume field
+  const sessionId = sessionStorage.getItem('fl_draft_id');
+  const sessionCode = sessionStorage.getItem('fl_draft_code');
+  if (sessionId && sessionCode) {
+    document.getElementById('resumeCode').value = sessionCode;
+    // Show a banner
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:#fff8e1;border:1px solid #f59f00;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:.82rem;color:#333;display:flex;align-items:center;justify-content:space-between;gap:10px;';
+    banner.innerHTML = '<span>⚠️ Hai un questionario in corso con codice <strong>' + sessionCode + '</strong>. Vuoi riprendere?</span>' +
+      '<div style="display:flex;gap:8px">' +
+      '<button onclick="window.resumeDraft()" style="background:#0f507b;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-family:Montserrat,sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;">Riprendi</button>' +
+      '<button onclick="this.parentElement.parentElement.remove();sessionStorage.clear();" style="background:transparent;border:1px solid #ccc;border-radius:6px;padding:6px 14px;font-family:Montserrat,sans-serif;font-size:.78rem;cursor:pointer;">Ignora</button>' +
+      '</div>';
+    const resumeCard = document.getElementById('resumeCard');
+    if (resumeCard) resumeCard.prepend(banner);
   }
 });
 
@@ -910,11 +930,11 @@ window.submitForm = async function submitForm() {
         <strong style="color:var(--text);">Come usarlo:</strong> manda questo codice via WhatsApp o email al collega che deve continuare. Lui lo inserisce nella schermata iniziale e riprende esattamente da qui.
       </p>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-        <button id="copyBtn" class="btn" onclick="copyCode()" style="background:var(--blue);color:#fff;padding:10px 20px;">
+        <button id="copyBtn" class="btn" onclick="window.copyCode()" style="background:var(--blue);color:#fff;padding:10px 20px;">
           <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           Copia codice
         </button>
-        <button class="btn" onclick="proceedFromCode()" style="background:var(--mag);color:#fff;padding:10px 20px;">
+        <button class="btn" onclick="window.proceedFromCode()" style="background:var(--mag);color:#fff;padding:10px 20px;">
           Ho salvato il codice, continua
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
