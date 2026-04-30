@@ -727,7 +727,7 @@ window.resumeDraft = async function resumeDraft() {
   }
 }
 
-async window.saveDraft = async function saveDraft(step) {
+window.saveDraft = async function saveDraft(step) {
   if (!_draftId) return;
   try {
     await updateDoc(doc(_db, "questionari", _draftId), {
