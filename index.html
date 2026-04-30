@@ -319,12 +319,12 @@
         <span class="icon"><svg width="14" height="14" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span>
         Hai già un questionario in corso?
       </div>
-      <p style="font-size:.84rem;color:var(--muted);margin-bottom:16px;line-height:1.6">Se hai ricevuto un link personale via email, incollalo qui sotto per riprendere da dove ti eri fermato.</p>
+      <p style="font-size:.84rem;color:var(--muted);margin-bottom:16px;line-height:1.6">Se hai già iniziato il questionario, inserisci il codice personale ricevuto per riprendere da dove ti eri fermato.</p>
       <div class="field-group">
-        <label>Il tuo link o codice di ripresa</label>
+        <label>Il tuo codice personale</label>
         <div style="display:flex;gap:10px">
-          <input type="text" id="resumeCode" placeholder="es. abc123xyz oppure incolla il link completo" style="flex:1"/>
-          <button class="btn btn-blue" onclick="resumeDraft()" style="white-space:nowrap;background:var(--blue);color:#fff">
+          <input type="text" id="resumeCode" placeholder="es. A3X9K2F8" style="flex:1"/>
+          <button class="btn btn-blue" onclick="window.resumeDraft()" style="white-space:nowrap;background:var(--blue);color:#fff">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             Riprendi
           </button>
@@ -345,7 +345,7 @@
         <span class="icon"><svg width="14" height="14" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
         Inizia un nuovo questionario
       </div>
-      <p style="font-size:.84rem;color:var(--muted);margin-bottom:16px;line-height:1.6">Inserisci la tua email aziendale: ti invieremo subito un <strong>link personale</strong> per riprendere il questionario in qualsiasi momento o condividerlo con un collega.</p>
+      <p style="font-size:.84rem;color:var(--muted);margin-bottom:16px;line-height:1.6">Inserisci la tua email aziendale e i dati dell'azienda. Ti verrà mostrato subito un <strong>codice personale</strong> da conservare per riprendere il questionario o condividerlo con un collega.</p>
       <div class="grid-2">
         <div class="field-group" style="grid-column:1/-1">
           <label>Email aziendale <span style="color:#CE2B37">*</span></label>
@@ -359,7 +359,7 @@
     </div>
     <div class="nav-bar">
       <span class="step-counter">Benvenuto</span>
-      <button class="btn btn-green" onclick="startNew()">Inizia il questionario <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+      <button class="btn btn-green" onclick="window.startNew()">Inizia il questionario <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
     </div>
   </div>
 
@@ -637,7 +637,7 @@ function checkUrlDraft() {
   }
 }
 
-async function startNew() {
+window.startNew = async function startNew() {
   const email = document.getElementById('az_email').value.trim();
   if (!email || !email.includes('@')) {
     alert('Inserisci un indirizzo email valido.');
@@ -680,7 +680,7 @@ async function startNew() {
   }
 }
 
-function showCodeModal(code, fullId, azienda) {
+window.showCodeModal = function showCodeModal(code, fullId, azienda) {
   const overlay = document.getElementById('codeModalOverlay');
   document.getElementById('codeDisplay').textContent = code;
   document.getElementById('codeFullId').textContent  = fullId;
@@ -707,7 +707,7 @@ window.proceedFromCode = function() {
   goTo(1);
 };
 
-async function resumeDraft() {
+window.resumeDraft = async function resumeDraft() {
   let code = document.getElementById('resumeCode').value.trim();
   // Extract ID from full URL if pasted
   if (code.includes('?id=')) code = new URLSearchParams(code.split('?')[1]).get('id');
@@ -739,7 +739,7 @@ async function resumeDraft() {
   }
 }
 
-async function saveDraft(step) {
+async window.saveDraft = async function saveDraft(step) {
   if (!_draftId) return;
   try {
     await updateDoc(doc(_db, "questionari", _draftId), {
