@@ -87,8 +87,8 @@
   .step-label.active { border-bottom-color: var(--green); }
   .step-label.active .sn { background: var(--green); color: #fff; }
   .step-label.active .st { color: rgba(255,255,255,.8); }
-  .step-label.done .sn { background: #e6165c; color: #fff; }
-  .step-label.done .st { color: rgba(255,255,255,.55); }
+  .step-label.done .sn { background: #27ae60; color: #fff; }
+  .step-label.done .st { color: rgba(255,255,255,.7); }
 
   /* ── MAIN ── */
   main { max-width: 800px; margin: 0 auto; padding: 36px 20px 80px; }
@@ -251,7 +251,7 @@
   .check-circle {
     width: 76px; height: 76px; background: var(--green); border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 24px; font-size: 2rem;
+    margin: 0 auto 24px; color: #fff;
   }
   .thankyou h2 { font-family: 'Montserrat', sans-serif; font-size: 2rem; color: var(--dark); margin-bottom: 12px; }
   .thankyou p { color: var(--muted); font-size: .9rem; line-height: 1.7; max-width: 440px; margin: 0 auto 24px; }
@@ -303,7 +303,7 @@
       <h1>Questionario<br>Contrattuale</h1>
       <p>Compila il questionario per permettere al nostro Dipartimento Tecnico di analizzare la situazione contrattuale e organizzativa della tua azienda.</p>
       <div class="badge-row">
-        <span class="intro-badge green">✓ Dati protetti GDPR</span>
+        <span class="intro-badge green"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Dati protetti GDPR</span>
         <span class="intro-badge">10 sezioni · ~15 min</span>
         <span class="intro-badge">Documento 4/2025</span>
       </div>
@@ -327,7 +327,7 @@
     </div>
     <div class="nav-bar">
       <span class="step-counter">Benvenuto</span>
-      <button class="btn btn-green" onclick="goTo(1)">Inizia il questionario ›</button>
+      <button class="btn btn-green" onclick="goTo(1)">Inizia il questionario <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
     </div>
   </div>
 
@@ -373,7 +373,7 @@
       <div class="field-group"><label><span class="q-num">17</span>Sede Legale e Operativa coincidono?</label><div class="radio-row" data-name="sedi"><label class="radio-opt"><input type="radio" name="sedi" value="si">Sì</label><label class="radio-opt"><input type="radio" name="sedi" value="no">No – sedi diverse</label></div></div>
       <div class="field-group"><label><span class="q-num">18</span>Codice/i ATECO</label><input type="text" placeholder="es. 47.11 – Commercio al dettaglio"/></div>
     </div>
-    <div class="nav-bar"><button class="btn btn-secondary" onclick="goTo(0)">‹ Indietro</button><span class="step-counter">1 / 10</span><button class="btn btn-primary" onclick="goTo(2)">Avanti ›</button></div>
+    <div class="nav-bar"><button class="btn btn-secondary" onclick="goTo(0)"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Indietro</button><span class="step-counter">1 / 10</span><button class="btn btn-primary" onclick="goTo(2)">Avanti <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
   </div>
 
   <!-- STEP 2: ASPETTI ECONOMICI -->
@@ -391,7 +391,7 @@
       <div class="field-group"><label><span class="q-num">5</span>Si effettuano ore di lavoro straordinario? Come vengono retribuite?</label><div class="radio-row" data-name="straordinario"><label class="radio-opt"><input type="radio" name="straordinario" value="si">Sì</label><label class="radio-opt"><input type="radio" name="straordinario" value="no">No</label></div><textarea style="margin-top:10px" placeholder="Modalità di retribuzione..."></textarea></div>
       <div class="field-group"><label><span class="q-num">6</span>I dipendenti utilizzano annualmente tutti i permessi retribuiti?</label><div class="radio-row" data-name="permessi"><label class="radio-opt"><input type="radio" name="permessi" value="si">Sì, tutti</label><label class="radio-opt"><input type="radio" name="permessi" value="no">No</label></div><textarea style="margin-top:10px" placeholder="Se no, quanti permessi restano inutilizzati?"></textarea></div>
     </div>
-    <div class="nav-bar"><button class="btn btn-secondary" onclick="goTo(1)">‹ Indietro</button><span class="step-counter">2 / 10</span><button class="btn btn-primary" onclick="goTo(3)">Avanti ›</button></div>
+    <div class="nav-bar"><button class="btn btn-secondary" onclick="goTo(1)"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Indietro</button><span class="step-counter">2 / 10</span><button class="btn btn-primary" onclick="goTo(3)">Avanti <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
   </div>
 
   <!-- STEP 3: ORGANIZZAZIONE -->
@@ -406,7 +406,7 @@
       <div class="field-group"><label><span class="q-num">5</span>Ha mai pensato di attivare un Fondo Interprofessionale per la formazione?</label><div class="radio-row" data-name="fondo_form"><label class="radio-opt"><input type="radio" name="fondo_form" value="si">Sì, attivo</label><label class="radio-opt"><input type="radio" name="fondo_form" value="valutare">Da valutare</label><label class="radio-opt"><input type="radio" name="fondo_form" value="no">No</label></div></div>
       <div class="field-group"><label><span class="q-num">6</span>Ha previsto la presenza del Fondo Pensioni? Quanti dipendenti lo hanno attivato?</label><div class="radio-row" data-name="fondo_pen"><label class="radio-opt"><input type="radio" name="fondo_pen" value="si">Sì</label><label class="radio-opt"><input type="radio" name="fondo_pen" value="no">No</label></div><input type="text" style="margin-top:10px" placeholder="Numero dipendenti con fondo pensione attivo"/></div>
     </div>
-    <div class="nav-bar"><button class="btn btn-secondary" onclick="goTo(2)">‹ Indietro</button><span class="step-counter">3 / 10</span><button class="btn btn-primary" onclick="goTo(4)">Avanti ›</button></div>
+    <div class="nav-bar"><button class="btn btn-secondary" onclick="goTo(2)"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Indietro</button><span class="step-counter">3 / 10</span><button class="btn btn-primary" onclick="goTo(4)">Avanti <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
   </div>
 
   <!-- STEP 4: CONFLITTI -->
@@ -433,7 +433,7 @@
       <div class="field-group"><label><span class="q-num">B5</span>Assistenza Contrattuale (W)? Importo mensile?</label><input type="text" placeholder="es. €5/mese"/></div>
       <div class="field-group"><label><span class="q-num">B6</span>Di quali servizi hanno beneficiato i dipendenti grazie agli EE.BB.?</label><textarea placeholder="Elencare i servizi..."></textarea></div>
     </div>
-    <div class="nav-bar"><button class="btn btn-secondary" onclick="goTo(3)">‹ Indietro</button><span class="step-counter">4 / 10</span><button class="btn btn-primary" onclick="goTo(5)">Avanti ›</button></div>
+    <div class="nav-bar"><button class="btn btn-secondary" onclick="goTo(3)"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Indietro</button><span class="step-counter">4 / 10</span><button class="btn btn-primary" onclick="goTo(5)">Avanti <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
   </div>
 
   <!-- STEP 5: ORARIO -->
@@ -448,7 +448,7 @@
       <div class="field-group"><label><span class="q-num">5</span>Ci sono periodi in cui è necessario superare l'orario ordinario?</label><textarea placeholder="Indicare i periodi e i motivi..."></textarea></div>
       <div class="field-group"><label><span class="q-num">6</span>Sono state rilevate inadempienze o sanzioni (superamento limiti, mancanza riposi)?</label><div class="radio-row" data-name="sanzioni_orario"><label class="radio-opt"><input type="radio" name="sanzioni_orario" value="si">Sì</label><label class="radio-opt"><input type="radio" name="sanzioni_orario" value="no">No</label></div><textarea style="margin-top:10px" placeholder="Dettagli..."></textarea></div>
     </div>
-    <div class="nav-bar"><button class="btn btn-secondary" onclick="goTo(4)">‹ Indietro</button><span class="step-counter">5 / 10</span><button class="btn btn-primary" onclick="goTo(6)">Avanti ›</button></div>
+    <div class="nav-bar"><button class="btn btn-secondary" onclick="goTo(4)"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Indietro</button><span class="step-counter">5 / 10</span><button class="btn btn-primary" onclick="goTo(6)">Avanti <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
   </div>
 
   <!-- STEP 6: REGOLAMENTO -->
@@ -463,7 +463,7 @@
       <div class="field-group"><label><span class="q-num">5</span>Ha mai riscontrato difficoltà nella gestione di comportamenti scorretti o conflitti interni?</label><div class="radio-row" data-name="difficolta_reg"><label class="radio-opt"><input type="radio" name="difficolta_reg" value="si">Sì</label><label class="radio-opt"><input type="radio" name="difficolta_reg" value="no">No</label></div><textarea style="margin-top:10px" placeholder="Descrivere le difficoltà..."></textarea></div>
       <div class="field-group"><label><span class="q-num">6</span>Sa che senza affissione in ogni unità produttiva non può esercitare il potere disciplinare?</label><div class="radio-row" data-name="affissione_consap"><label class="radio-opt"><input type="radio" name="affissione_consap" value="si">Sì</label><label class="radio-opt"><input type="radio" name="affissione_consap" value="no">No, non lo sapevo</label></div></div>
     </div>
-    <div class="nav-bar"><button class="btn btn-secondary" onclick="goTo(5)">‹ Indietro</button><span class="step-counter">6 / 10</span><button class="btn btn-primary" onclick="goTo(7)">Avanti ›</button></div>
+    <div class="nav-bar"><button class="btn btn-secondary" onclick="goTo(5)"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Indietro</button><span class="step-counter">6 / 10</span><button class="btn btn-primary" onclick="goTo(7)">Avanti <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
   </div>
 
   <!-- STEP 7: SICUREZZA -->
@@ -487,7 +487,7 @@
       <div class="field-group"><label><span class="q-num">C5</span>Adotta programmi di sorveglianza sanitaria? È presente il defibrillatore?</label><textarea placeholder="Descrivere i programmi di sorveglianza e la presenza del DAE..."></textarea></div>
       <div class="field-group"><label><span class="q-num">C6</span>L'azienda adotta buone prassi validate dall'INAIL?</label><div class="radio-row" data-name="buone_prassi"><label class="radio-opt"><input type="radio" name="buone_prassi" value="si">Sì</label><label class="radio-opt"><input type="radio" name="buone_prassi" value="no">No</label></div></div>
     </div>
-    <div class="nav-bar"><button class="btn btn-secondary" onclick="goTo(6)">‹ Indietro</button><span class="step-counter">7 / 10</span><button class="btn btn-primary" onclick="goTo(8)">Avanti ›</button></div>
+    <div class="nav-bar"><button class="btn btn-secondary" onclick="goTo(6)"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Indietro</button><span class="step-counter">7 / 10</span><button class="btn btn-primary" onclick="goTo(8)">Avanti <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
   </div>
 
   <!-- STEP 8: CLIMA -->
@@ -502,7 +502,7 @@
       <div class="field-group"><label><span class="q-num">5</span>Come verrebbero percepiti dai lavoratori i sistemi premianti?</label><textarea placeholder="Percezione attesa dei lavoratori..."></textarea></div>
       <div class="field-group"><label><span class="q-num">6</span>C'è apertura a introdurre benefit, coperture assicurative o servizi per le famiglie?</label><div class="radio-row" data-name="benefit_nuovi"><label class="radio-opt"><input type="radio" name="benefit_nuovi" value="si">Sì, molto interesse</label><label class="radio-opt"><input type="radio" name="benefit_nuovi" value="forse">Da valutare</label><label class="radio-opt"><input type="radio" name="benefit_nuovi" value="no">No</label></div></div>
     </div>
-    <div class="nav-bar"><button class="btn btn-secondary" onclick="goTo(7)">‹ Indietro</button><span class="step-counter">8 / 10</span><button class="btn btn-primary" onclick="goTo(9)">Avanti ›</button></div>
+    <div class="nav-bar"><button class="btn btn-secondary" onclick="goTo(7)"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Indietro</button><span class="step-counter">8 / 10</span><button class="btn btn-primary" onclick="goTo(9)">Avanti <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
   </div>
 
   <!-- STEP 9: PRIORITÀ -->
@@ -517,7 +517,7 @@
       <div class="field-group"><label><span class="q-num">5</span>Priorità numero 5</label><input type="text" placeholder="..."/></div>
       <div class="field-group"><label><span class="q-num">6</span>Priorità numero 6</label><input type="text" placeholder="..."/></div>
     </div>
-    <div class="nav-bar"><button class="btn btn-secondary" onclick="goTo(8)">‹ Indietro</button><span class="step-counter">9 / 10</span><button class="btn btn-primary" onclick="goTo(10)">Avanti ›</button></div>
+    <div class="nav-bar"><button class="btn btn-secondary" onclick="goTo(8)"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Indietro</button><span class="step-counter">9 / 10</span><button class="btn btn-primary" onclick="goTo(10)">Avanti <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
   </div>
 
   <!-- STEP 10: PRIVACY -->
@@ -549,16 +549,16 @@
       </div>
     </div>
     <div class="nav-bar">
-      <button class="btn btn-secondary" onclick="goTo(9)">‹ Indietro</button>
+      <button class="btn btn-secondary" onclick="goTo(9)"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Indietro</button>
       <span class="step-counter">10 / 10</span>
-      <button class="btn btn-green" onclick="submitForm()">✓ Invia Questionario</button>
+      <button class="btn btn-green" onclick="submitForm()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Invia Questionario</button>
     </div>
   </div>
 
   <!-- STEP 11: THANK YOU -->
   <div class="form-section" id="step-11">
     <div class="thankyou">
-      <div class="check-circle">✓</div>
+      <div class="check-circle"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="9 12 12 15 16 9"/></svg></div>
       <h2>Questionario Inviato!</h2>
       <p>Grazie per aver completato il Questionario Contrattuale. Il nostro Dipartimento Tecnico analizzerà le informazioni fornite e sarà in contatto con voi quanto prima.</p>
       <img src="data:image/png;base64,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" alt="fabbrica lavoro" style="height:40px;width:auto;margin:0 auto;display:block;opacity:.6"/>
@@ -577,7 +577,29 @@
   </div>
 </footer>
 
-<script>
+<script type="module">
+import { initializeApp }  from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyDIE0ftmEGEwGKmu1penyBCU7xJd3qdO-8",
+  authDomain:        "fabbrica-lavoro-pmi.firebaseapp.com",
+  projectId:         "fabbrica-lavoro-pmi",
+  storageBucket:     "fabbrica-lavoro-pmi.firebasestorage.app",
+  messagingSenderId: "198993651809",
+  appId:             "1:198993651809:web:1ad82a1799e18e81e0e220"
+};
+const _app = initializeApp(firebaseConfig);
+const _db  = getFirestore(_app);
+
+async function saveQuestionario(data) {
+  const docRef = await addDoc(collection(_db, "questionari"), {
+    ...data,
+    inviatoIl: serverTimestamp()
+  });
+  return docRef.id;
+}
+
 const STEPS = [
   'Inizio','CCNL','Economico','Flessibilità','Sindacale',
   'Orario','Regolamento','Sicurezza','Clima','Priorità','Privacy'
@@ -596,7 +618,7 @@ STEPS.forEach((s, i) => {
   labelsEl.appendChild(el);
 });
 
-function goTo(n) {
+window.goTo = function goTo(n) {
   if (n > MAX + 1) return;
   // Update labels
   document.getElementById('lbl-' + Math.min(current, MAX))?.classList.remove('active');
@@ -632,7 +654,7 @@ document.querySelectorAll('.radio-opt').forEach(opt => {
   });
 });
 
-function updateConsent(rowId, cb) {
+window.updateConsent = function updateConsent(rowId, cb) {
   const row = document.getElementById(rowId);
   row.style.borderColor = cb.checked ? 'var(--green)' : 'var(--border)';
   row.style.background  = cb.checked ? '#fde8f0' : 'var(--white)';
@@ -666,29 +688,25 @@ function collectFormData() {
 }
 
 // ── Submit ────────────────────────────────────────────────────────────────────
-async function submitForm() {
+window.submitForm = async function submitForm() {
   if (!document.getElementById('consentA').checked) {
     alert('Il consenso al trattamento dei dati (2-A) è obbligatorio per procedere.');
     return;
   }
   const btn = document.querySelector('#step-10 .btn-green');
-  btn.textContent = '⏳ Invio in corso...';
+  btn.textContent = 'Invio in corso...';
   btn.disabled = true;
 
   try {
     const data = collectFormData();
 
-    if (typeof window._saveQuestionario === 'function') {
-      const docId = await window._saveQuestionario(data);
-      console.log('✅ Salvato su Firestore, ID:', docId);
-    } else {
-      console.warn('⚠️ Firebase non pronto');
-    }
+    const docId = await saveQuestionario(data);
+    console.log('✅ Salvato su Firestore, ID:', docId);
 
     goTo(11);
   } catch (err) {
     console.error('Errore invio:', err);
-    btn.textContent = '✓ Invia Questionario';
+    btn.textContent = 'Invia Questionario';
     btn.disabled = false;
     alert('Errore durante l\'invio. Controlla la connessione e riprova.');
   }
