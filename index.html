@@ -692,9 +692,7 @@ window.copyCode = function() {
 };
 
 window.proceedFromCode = function() {
-  document.getElementById('codeModalOverlay').classList.remove('open');
-  const btn = document.querySelector('#step-0 .btn-green');
-  if (btn) { btn.innerHTML = 'Inizia il questionario'; btn.disabled = false; }
+  document.getElementById('codeModalOverlay').style.display = 'none';
   window.goTo(1);
 };
 
@@ -909,32 +907,37 @@ window.submitForm = async function submitForm() {
 </script>
 
 <!-- CODICE UNIVOCO MODAL -->
-<div class="modal-overlay" id="codeModalOverlay">
-  <div class="modal-box" style="background:#fff;border-radius:16px;width:100%;max-width:480px;box-shadow:0 12px 48px rgba(0,0,0,.25);overflow:hidden;">
-    <!-- Header -->
-    <div style="background:var(--blue);padding:24px 28px;text-align:center;">
-      <div style="width:56px;height:56px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
-        <svg width="26" height="26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+<div id="codeModalOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:460px;box-shadow:0 12px 48px rgba(0,0,0,.3);overflow:hidden;">
+    <div style="background:#0f507b;padding:24px 28px;text-align:center;">
+      <div style="width:52px;height:52px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+        <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
       </div>
-      <h3 style="color:#fff;font-size:1.1rem;font-weight:700;margin-bottom:6px;">Il tuo codice personale</h3>
-      <p style="color:rgba(255,255,255,.7);font-size:.82rem;line-height:1.5;">Conservalo! Serve per riprendere il questionario<br>o condividerlo con un collega.</p>
+      <h3 style="color:#fff;font-size:1.1rem;font-weight:700;margin:0 0 6px;">Il tuo codice personale</h3>
+      <p style="color:rgba(255,255,255,.75);font-size:.82rem;margin:0;line-height:1.5;">Conservalo per riprendere o condividere con un collega.</p>
     </div>
-    <!-- Code display -->
     <div style="padding:28px;text-align:center;">
-      <div style="background:var(--cream);border:2px dashed var(--blue);border-radius:12px;padding:20px;margin-bottom:20px;">
-        <div style="font-size:.7rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;">Codice di accesso</div>
-        <div id="codeDisplay" style="font-size:2.2rem;font-weight:800;color:var(--blue);letter-spacing:.2em;font-family:'Montserrat',sans-serif;"></div>
-        <div style="font-size:.68rem;color:var(--muted);margin-top:8px;">ID completo: <span id="codeFullId" style="font-family:monospace;"></span></div>
+      <div style="background:#f7f8fa;border:2px dashed #0f507b;border-radius:12px;padding:20px;margin-bottom:20px;">
+        <div style="font-size:.68rem;color:#6b7a8d;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;">Codice di accesso</div>
+        <div id="codeDisplay" style="font-size:2.4rem;font-weight:800;color:#0f507b;letter-spacing:.25em;font-family:monospace;"></div>
+        <div style="font-size:.68rem;color:#6b7a8d;margin-top:8px;">ID completo: <span id="codeFullId" style="font-family:monospace;font-size:.68rem;"></span></div>
       </div>
-      <p style="font-size:.8rem;color:var(--muted);line-height:1.6;margin-bottom:20px;">
-        <strong style="color:var(--text);">Come usarlo:</strong> manda questo codice via WhatsApp o email al collega che deve continuare. Lui lo inserisce nella schermata iniziale e riprende esattamente da qui.
-      </p>
-      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-        <button id="copyBtn" class="btn" onclick="window.copyCode()" style="background:var(--blue);color:#fff;padding:10px 20px;">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <p style="font-size:.8rem;color:#6b7a8d;line-height:1.6;margin-bottom:20px;">Manda questo codice via <strong>WhatsApp o email</strong> al collega che deve continuare. Lui lo inserisce nella schermata iniziale e riprende da dove ti sei fermato.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button id="copyBtn" style="background:#0f507b;color:#fff;border:none;border-radius:8px;padding:12px 20px;font-family:Montserrat,sans-serif;font-size:.86rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;" onclick="
+          var code = document.getElementById('codeDisplay').textContent;
+          navigator.clipboard.writeText(code).then(function(){
+            document.getElementById('copyBtn').textContent = '✓ Codice copiato!';
+            document.getElementById('copyBtn').style.background = '#27ae60';
+          });
+        ">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           Copia codice
         </button>
-        <button class="btn" onclick="window.proceedFromCode()" style="background:var(--mag);color:#fff;padding:10px 20px;">
+        <button style="background:#e6165c;color:#fff;border:none;border-radius:8px;padding:12px 20px;font-family:Montserrat,sans-serif;font-size:.86rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;" onclick="
+          document.getElementById('codeModalOverlay').style.display = 'none';
+          window.goTo(1);
+        ">
           Ho salvato il codice, continua
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
@@ -942,11 +945,6 @@ window.submitForm = async function submitForm() {
     </div>
   </div>
 </div>
-
-<style>
-.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:300; align-items:center; justify-content:center; padding:16px; }
-.modal-overlay.open { display:flex; }
-</style>
 
 </body>
 </html>
