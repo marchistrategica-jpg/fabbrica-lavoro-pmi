@@ -671,6 +671,9 @@ function collectFormData() {
     const labelEl = fg.querySelector('label');
     const inputEl = fg.querySelector('input[type="text"], input[type="email"], input[type="date"], textarea');
     if (labelEl && inputEl && inputEl.value.trim()) {
+      // Rimuove il numero della domanda (span.q-num) dal testo dell'etichetta
+      const qNumEl = labelEl.querySelector('.q-num');
+      if (qNumEl) qNumEl.remove();
       const key = labelEl.innerText.trim().replace(/\s+/g, ' ').substring(0, 80) || ('campo_' + i);
       campi[key] = inputEl.value.trim();
     }
