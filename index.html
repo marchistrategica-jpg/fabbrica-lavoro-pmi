@@ -703,12 +703,34 @@ function goTo(n) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
   if (lbl) lbl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 
-  // Save progress
+  // Save progress + all field data
   if (draftId && n > 0 && n <= 10) {
+    var savedCampi = {};
+    document.querySelectorAll('.field-group').forEach(function(fg, i) {
+      var labelEl = fg.querySelector('label');
+      var inputEl = fg.querySelector('input[type="text"], input[type="email"], input[type="date"], textarea');
+      if (labelEl && inputEl && inputEl.value.trim()) {
+        var clone = labelEl.cloneNode(true);
+        var qn = clone.querySelector('.q-num');
+        if (qn) qn.parentNode.removeChild(qn);
+        var key = clone.innerText.trim().replace(/\s+/g, ' ').substring(0, 80) || ('campo_' + i);
+        savedCampi[key] = inputEl.value.trim();
+      }
+    });
+    var savedRadios = {};
+    document.querySelectorAll('input[type="radio"]:checked').forEach(function(r) {
+      savedRadios[r.name] = r.value;
+    });
     db.collection('questionari').doc(draftId).update({
-      stepCorrente: n,
-      aggiornatoIl: firebase.firestore.FieldValue.serverTimestamp()
-    }).catch(function(e) { console.warn('Salvataggio step fallito:', e); });
+      stepCorrente:  n,
+      aggiornatoIl:  firebase.firestore.FieldValue.serverTimestamp(),
+      campi:         savedCampi,
+      risposteRadio: savedRadios,
+      azienda:       document.getElementById('az_nome').value.trim()      || '—',
+      partitaIva:    document.getElementById('az_piva').value.trim()      || '—',
+      nDipendenti:   document.getElementById('az_dip').value.trim()       || '—',
+      delegato:      document.getElementById('az_delegato').value.trim()  || '—',
+    }).catch(function(e) { console.warn('Salvataggio dati fallito:', e); });
   }
 }
 
@@ -815,10 +837,39 @@ function resumeDraft() {
     sessionStorage.setItem('fl_draft_code', draftCode);
 
     var data = found.data();
-    if (data.azienda    && data.azienda    !== '—') document.getElementById('az_nome').value     = data.azienda;
-    if (data.partitaIva && data.partitaIva !== '—') document.getElementById('az_piva').value     = data.partitaIva;
-    if (data.nDipendenti && data.nDipendenti !== '—') document.getElementById('az_dip').value    = data.nDipendenti;
-    if (data.delegato   && data.delegato   !== '—') document.getElementById('az_delegato').value = data.delegato;
+
+    // Restore basic fields
+    if (data.azienda     && data.azienda     !== '—') document.getElementById('az_nome').value      = data.azienda;
+    if (data.partitaIva  && data.partitaIva  !== '—') document.getElementById('az_piva').value      = data.partitaIva;
+    if (data.nDipendenti && data.nDipendenti !== '—') document.getElementById('az_dip').value       = data.nDipendenti;
+    if (data.delegato    && data.delegato    !== '—') document.getElementById('az_delegato').value  = data.delegato;
+
+    // Restore text/textarea fields
+    if (data.campi) {
+      document.querySelectorAll('.field-group').forEach(function(fg) {
+        var labelEl = fg.querySelector('label');
+        var inputEl = fg.querySelector('input[type="text"], input[type="email"], input[type="date"], textarea');
+        if (labelEl && inputEl) {
+          var clone = labelEl.cloneNode(true);
+          var qn = clone.querySelector('.q-num');
+          if (qn) qn.parentNode.removeChild(qn);
+          var key = clone.innerText.trim().replace(/\s+/g, ' ').substring(0, 80);
+          if (data.campi[key]) inputEl.value = data.campi[key];
+        }
+      });
+    }
+
+    // Restore radio buttons
+    if (data.risposteRadio) {
+      Object.keys(data.risposteRadio).forEach(function(name) {
+        var val = data.risposteRadio[name];
+        var input = document.querySelector('input[name="' + name + '"][value="' + val + '"]');
+        if (input) {
+          input.checked = true;
+          input.closest('.radio-opt').classList.add('selected');
+        }
+      });
+    }
 
     goTo(data.stepCorrente || 1);
   }).catch(function(e) {
