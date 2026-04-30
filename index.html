@@ -330,14 +330,12 @@
       <p style="font-size:.84rem;color:var(--muted);margin-bottom:16px;line-height:1.6">Inserisci il codice personale ricevuto per riprendere da dove ti eri fermato.</p>
       <div class="field-group">
         <label>Il tuo codice personale</label>
-        <div style="display:flex;gap:10px">
-          <input type="text" id="resumeCode" placeholder="es. A3X9K2F8" style="flex:1;text-transform:uppercase"/>
-          <button class="btn btn-blue" onclick="resumeDraft()" style="white-space:nowrap;background:var(--blue);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-family:Montserrat,sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
-            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            Riprendi
-          </button>
-        </div>
-        <div id="resumeError" style="color:#CE2B37;font-size:.78rem;margin-top:6px;display:none;">Codice non trovato. Controlla il codice ricevuto.</div>
+        <input type="text" id="resumeCode" placeholder="es. A3X9K2F8" style="width:100%;text-transform:uppercase;margin-bottom:10px;"/>
+        <button onclick="resumeDraft()" style="width:100%;background:#0f507b;color:#fff;border:none;border-radius:8px;padding:13px 20px;font-family:Montserrat,sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Riprendi il questionario
+        </button>
+        <div id="resumeError" style="color:#CE2B37;font-size:.78rem;margin-top:8px;display:none;">Codice non trovato. Controlla il codice ricevuto.</div>
       </div>
     </div>
 
