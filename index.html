@@ -345,12 +345,8 @@
         <span class="icon"><svg width="14" height="14" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
         Inizia un nuovo questionario
       </div>
-      <p style="font-size:.84rem;color:var(--muted);margin-bottom:16px;line-height:1.6">Inserisci la tua email aziendale e i dati dell'azienda. Ti verrà mostrato subito un <strong>codice personale</strong> da conservare per riprendere il questionario o condividerlo con un collega.</p>
+      <p style="font-size:.84rem;color:var(--muted);margin-bottom:16px;line-height:1.6">Inserisci i dati dell'azienda. Ti verrà mostrato subito un <strong>codice personale</strong> da conservare per riprendere il questionario o condividerlo con un collega.</p>
       <div class="grid-2">
-        <div class="field-group" style="grid-column:1/-1">
-          <label>Email aziendale <span style="color:#CE2B37">*</span></label>
-          <input type="email" id="az_email" placeholder="es. mario.rossi@azienda.it"/>
-        </div>
         <div class="field-group"><label>Ragione Sociale / Azienda</label><input type="text" id="az_nome" placeholder="es. Rossi s.r.l."/></div>
         <div class="field-group"><label>Partita IVA</label><input type="text" id="az_piva" placeholder="12345678901" maxlength="11"/></div>
         <div class="field-group"><label>Numero Dipendenti</label><input type="text" id="az_dip" placeholder="es. 12"/></div>
@@ -638,20 +634,12 @@ function checkUrlDraft() {
 }
 
 window.startNew = async function startNew() {
-  const email = document.getElementById('az_email').value.trim();
-  if (!email || !email.includes('@')) {
-    alert('Inserisci un indirizzo email valido.');
-    document.getElementById('az_email').focus();
-    return;
-  }
-
   const btn = document.querySelector('#step-0 .btn-green');
   btn.textContent = 'Creazione in corso...';
   btn.disabled = true;
 
   try {
     const data = {
-      az_email:     email,
       azienda:      document.getElementById('az_nome').value.trim()     || '—',
       partitaIva:   document.getElementById('az_piva').value.trim()     || '—',
       nDipendenti:  document.getElementById('az_dip').value.trim()      || '—',
