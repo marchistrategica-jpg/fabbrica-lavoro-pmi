@@ -764,7 +764,7 @@ async function saveQuestionario(data) {
 }
 
 // Check URL for draft ID on load
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
   // Check URL param first
   const params = new URLSearchParams(window.location.search);
   const urlId = params.get('id');
@@ -774,21 +774,32 @@ window.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Check session storage - if draft already exists, show it in resume field
-  const sessionId = sessionStorage.getItem('fl_draft_id');
+  // Check session storage - verify draft still exists on Firestore
+  const sessionId   = sessionStorage.getItem('fl_draft_id');
   const sessionCode = sessionStorage.getItem('fl_draft_code');
   if (sessionId && sessionCode) {
-    document.getElementById('resumeCode').value = sessionCode;
-    // Show a banner
-    const banner = document.createElement('div');
-    banner.style.cssText = 'background:#fff8e1;border:1px solid #f59f00;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:.82rem;color:#333;display:flex;align-items:center;justify-content:space-between;gap:10px;';
-    banner.innerHTML = '<span>⚠️ Hai un questionario in corso con codice <strong>' + sessionCode + '</strong>. Vuoi riprendere?</span>' +
-      '<div style="display:flex;gap:8px">' +
-      '<button onclick="window.resumeDraft()" style="background:#0f507b;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-family:Montserrat,sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;">Riprendi</button>' +
-      '<button onclick="this.parentElement.parentElement.remove();sessionStorage.clear();" style="background:transparent;border:1px solid #ccc;border-radius:6px;padding:6px 14px;font-family:Montserrat,sans-serif;font-size:.78rem;cursor:pointer;">Ignora</button>' +
-      '</div>';
-    const resumeCard = document.getElementById('resumeCard');
-    if (resumeCard) resumeCard.prepend(banner);
+    try {
+      const docSnap = await getDoc(doc(_db, "questionari", sessionId));
+      if (!docSnap.exists() || docSnap.data().stato === 'completato') {
+        // Draft no longer exists or already completed — clean up silently
+        sessionStorage.clear();
+        return;
+      }
+      // Draft exists and is still in progress — show banner
+      document.getElementById('resumeCode').value = sessionCode;
+      const banner = document.createElement('div');
+      banner.style.cssText = 'background:#fff8e1;border:1px solid #f59f00;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:.82rem;color:#333;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;';
+      banner.innerHTML = '<span>⚠️ Hai un questionario in corso con codice <strong>' + sessionCode + '</strong>. Vuoi riprendere?</span>' +
+        '<div style="display:flex;gap:8px">' +
+        '<button onclick="window.resumeDraft()" style="background:#0f507b;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-family:Montserrat,sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;">Riprendi</button>' +
+        '<button onclick="this.parentElement.parentElement.remove();sessionStorage.clear();" style="background:transparent;border:1px solid #ccc;border-radius:6px;padding:6px 14px;font-family:Montserrat,sans-serif;font-size:.78rem;cursor:pointer;">Ignora</button>' +
+        '</div>';
+      const resumeCard = document.getElementById('resumeCard');
+      if (resumeCard) resumeCard.prepend(banner);
+    } catch(e) {
+      // Error checking — clean up to be safe
+      sessionStorage.clear();
+    }
   }
 });
 
