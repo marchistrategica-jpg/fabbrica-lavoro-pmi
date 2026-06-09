@@ -446,14 +446,57 @@ window.openModal = async id => {
   const CHECK = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
 
   const campiHtml = d.campi
-    ? Object.entries(d.campi).map(([k,v]) =>
-        `<div class="detail-item full"><div class="di-label">${k}</div><div class="di-value">${v}</div></div>`
-      ).join('') : '';
+    ? Object.entries(d.campi).map(([k,v]) => {
+        const domanda = (typeof v === 'object' && v.domanda) ? v.domanda : k;
+        const risposta = (typeof v === 'object' && v.risposta) ? v.risposta : (typeof v === 'string' ? v : '');
+        if (!risposta) return '';
+        return `<div class="detail-item full"><div class="di-label">${domanda}</div><div class="di-value">${risposta}</div></div>`;
+      }).join('') : '';
+
+  const radioLabels = {
+    'altri_ccnl': 'In passato avete applicato altri CCNL?',
+    'rsa_rsu': 'Sono presenti RSA o RSU?',
+    'acc_2liv': 'Accordi di II° Livello?',
+    'acc_prox': 'Accordi di Prossimità?',
+    'sedi': 'Sede Legale e Operativa coincidono?',
+    'buoni_pasto': 'Utilizza buoni pasto?',
+    'welfare_buoni': 'Utilizza buoni welfare / fringe benefit?',
+    'superminimi': 'Eroga superminimi assorbibili?',
+    'straordinario': 'Si effettuano ore di lavoro straordinario?',
+    'permessi': 'I dipendenti utilizzano tutti i permessi retribuiti?',
+    'limiti_termine': 'Problemi con limiti contratti a termine?',
+    'prova_lunga': 'Periodi di prova più lunghi rispetto agli attuali?',
+    'tfr': 'Il TFR è mantenuto in azienda o all'esterno?',
+    'fondo_form': 'Fondo Interprofessionale per la formazione?',
+    'fondo_pen': 'Fondo Pensioni previsto?',
+    'soggetti_prob': 'Sono presenti soggetti problematici?',
+    'codice_disc': 'È presente il codice disciplinare?',
+    'vertenze': 'Vi sono state vertenze in passato?',
+    'conciliazioni': 'L'azienda ha attivato conciliazioni sindacali?',
+    'ispezioni': 'Sono state effettuate verifiche ispettive?',
+    'picchi': 'Sono presenti picchi di produzione o turni?',
+    'sanzioni_orario': 'Sono state rilevate inadempienze sull'orario?',
+    'reg_az': 'Ha il Regolamento Aziendale?',
+    'consapevole_reg': 'È consapevole delle conseguenze senza Regolamento?',
+    'reg_personalizzato': 'Sa che il Regolamento è personalizzabile?',
+    'difficolta_reg': 'Ha riscontrato difficoltà nella gestione interna?',
+    'affissione_consap': 'Sa dell'obbligo di affissione?',
+    'dvr': 'Il DVR è stato redatto e aggiornato?',
+    'form_sicurezza': 'È stata effettuata la formazione dei lavoratori?',
+    'rischi_spec': 'Ci sono lavoratori esposti a rischi particolari?',
+    'iso': 'L'azienda ha implementato certificazioni ISO?',
+    'form_aggiuntiva': 'L'azienda realizza formazione aggiuntiva?',
+    'impianti': 'L'azienda intende realizzare interventi sugli impianti?',
+    'buone_prassi': 'L'azienda adotta buone prassi validate dall'INAIL?',
+    'premio_ris': 'Sono presenti sistemi di premio di risultato?',
+    'benefit_nuovi': 'C'è apertura a introdurre nuovi benefit?',
+  };
 
   const radioHtml = d.risposteRadio
-    ? Object.entries(d.risposteRadio).map(([k,v]) =>
-        `<div class="detail-item"><div class="di-label">${k}</div><div class="di-value">${v.toUpperCase()}</div></div>`
-      ).join('') : '';
+    ? Object.entries(d.risposteRadio).map(([k,v]) => {
+        const label = radioLabels[k] || k;
+        return `<div class="detail-item full"><div class="di-label">${label}</div><div class="di-value">${v.toUpperCase()}</div></div>`;
+      }).join('') : '';
 
   document.getElementById('modalTitle').textContent = d.azienda || 'Questionario';
   document.getElementById('modalBody').innerHTML = `
