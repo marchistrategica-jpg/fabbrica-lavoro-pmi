@@ -435,234 +435,75 @@ function renderTable(docs) {
 // MODAL
 let currentDocId = null;
 window.openModal = async id => {
-  currentDocId = id;
   const d = allDocs.find(x => x.id === id);
   if (!d) return;
   if (!d.esaminato) await updateDoc(doc(db,"questionari",id), {esaminato:true});
   const dataStr = d.inviatoIl?.toDate?.() ? d.inviatoIl.toDate().toLocaleString('it-IT') : '—';
   const BUILDING = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="1"/><path d="M9 3v18M15 3v18M2 9h20M2 15h20"/></svg>';
-  const FILE = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
-  const CHECK = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
 
-  const campiHtml = d.campi
-    ? Object.entries(d.campi).map(([k,v]) => {
-        const domanda = (typeof v === 'object' && v.domanda) ? v.domanda : k;
-        const risposta = (typeof v === 'object' && v.risposta) ? v.risposta : (typeof v === 'string' ? v : '');
-        if (!risposta) return '';
-        return `<div class="detail-item full"><div class="di-label">${domanda}</div><div class="di-value">${risposta}</div></div>`;
-      }).join('') : '';
-
-  const radioLabels = {
-    'altri_ccnl': 'In passato avete applicato altri CCNL?',
-    'rsa_rsu': 'Sono presenti RSA o RSU?',
-    'acc_2liv': 'Accordi di II livello?',
-    'acc_prox': 'Accordi di Prossimita?',
-    'sedi': 'Sede Legale e Operativa coincidono?',
-    'buoni_pasto': 'Utilizza buoni pasto?',
-    'welfare_buoni': 'Utilizza buoni welfare o fringe benefit?',
-    'superminimi': 'Eroga superminimi assorbibili?',
-    'straordinario': 'Si effettuano ore di lavoro straordinario?',
-    'permessi': 'I dipendenti utilizzano tutti i permessi retribuiti?',
-    'limiti_termine': 'Problemi con limiti contratti a termine?',
-    'prova_lunga': 'Periodi di prova piu lunghi rispetto agli attuali?',
-    'tfr': 'TFR mantenuto in azienda o trasferito?',
-    'fondo_form': 'Fondo Interprofessionale per la formazione?',
-    'fondo_pen': 'Fondo Pensioni previsto?',
-    'soggetti_prob': 'Sono presenti soggetti problematici?',
-    'codice_disc': 'E presente il codice disciplinare?',
-    'vertenze': 'Vi sono state vertenze in passato?',
-    'conciliazioni': 'Conciliazioni sindacali attivate?',
-    'ispezioni': 'Verifiche ispettive effettuate?',
-    'picchi': 'Sono presenti picchi di produzione o turni?',
-    'sanzioni_orario': 'Inadempienze rilevate sull orario di lavoro?',
-    'reg_az': 'Ha il Regolamento Aziendale?',
-    'consapevole_reg': 'Consapevole delle conseguenze senza Regolamento?',
-    'reg_personalizzato': 'Sa che il Regolamento e personalizzabile?',
-    'difficolta_reg': 'Difficolta nella gestione interna riscontrate?',
-    'affissione_consap': 'Obbligo di affissione in ogni unita produttiva?',
-    'dvr': 'Il DVR e stato redatto e aggiornato?',
-    'form_sicurezza': 'Formazione dei lavoratori effettuata?',
-    'rischi_spec': 'Lavoratori esposti a rischi particolari?',
-    'iso': 'Certificazioni ISO implementate?',
-    'form_aggiuntiva': 'Formazione aggiuntiva rispetto alla legge?',
-    'impianti': 'Interventi su impianti previsti?',
-    'buone_prassi': 'Buone prassi validate INAIL adottate?',
-    'premio_ris': 'Sistemi di premio di risultato presenti?',
-    'benefit_nuovi': 'Apertura a introdurre nuovi benefit?',
-  };
-
-  const radioHtml = d.risposteRadio
-    ? Object.entries(d.risposteRadio).map(([k,v]) => {
-        const label = radioLabels[k] || k;
-        return `<div class="detail-item full"><div class="di-label">${label}</div><div class="di-value">${v.toUpperCase()}</div></div>`;
-      }).join('') : '';
-
-  document.getElementById('modalTitle').textContent = d.azienda || 'Questionario';
-  // Full questionnaire map: sections with radio name, field IDs for text, and labels
-  const QUESTIONARIO = [
-    { sezione: 'Consulente & CCNL', domande: [
-      { testo: "Quale CCNL applica lazienda?'                    campo: 'f001" },
-      { testo: "Codice CNEL del CCNL'                              campo: 'f002" },
-      { testo: "Scadenza del CCNL'                                 campo: 'f003" },
-      { testo: "Sindacati Lavoratori firmatari'                    campo: 'f004" },
-      { testo: "Sindacati Datoriali firmatari'                     campo: 'f005" },
-      { testo: "L'azienda è associata? A chi?",                    campo: 'f006' },
-      { testo: "In passato avete applicato altri CCNL?'            radio: 'altri_ccnl", campo: 'f007' },
-      { testo: "Lavoratori iscritti a OO.SS.? Quali?'             campo: 'f008" },
-      { testo: "Sono presenti RSA o RSU? Sigle sindacali?'         radio: 'rsa_rsu",    campo: 'f009' },
-      { testo: "Sono state indette assemblee? Quando?'             campo: 'f010" },
-      { testo: "Accordi di II° Livello?'                           radio: 'acc_2liv" },
-      { testo: "Accordi di Prossimità?'                            radio: 'acc_prox" },
-      { testo: "Utilizzate forme di Welfare Aziendale?'            campo: 'f011" },
-      { testo: "Inquadramento INPS (CSC)'                          campo: 'f012" },
-      { testo: "Inquadramento INAIL (PAT)'                         campo: 'f013" },
-      { testo: "Sede Legale e Operativa coincidono?'               radio: 'sedi" },
-      { testo: "Codice/i ATECO'                                    campo: 'f014" },
-    ]},
-    { sezione: 'Aspetti Economici', domande: [
-      { testo: "Utilizza buoni pasto?'                             radio: 'buoni_pasto" },
-      { testo: "Utilizza buoni welfare / fringe benefit?'          radio: 'welfare_buoni", campo: 'f015' },
-      { testo: "Eroga superminimi assorbibili?'                    radio: 'superminimi" },
-      { testo: "Importo Totale Annuale superminimi (€)'            campo: 'f016" },
-      { testo: "Eroga premi in busta paga? Su quali criteri?'      campo: 'f017" },
-      { testo: "Si effettuano ore di lavoro straordinario?'        radio: 'straordinario", campo: 'f018' },
-      { testo: "I dipendenti utilizzano tutti i permessi retribuiti?' radio: 'permessi", campo: 'f019' },
-    ]},
-    { sezione: 'Organizzazione e Flessibilità', domande: [
-      { testo: "Ci sono contratti part-time?'                      campo: 'f020" },
-      { testo: "Problemi con limiti contratti a termine?'          radio: 'limiti_termine", campo: 'f021' },
-      { testo: "Periodi di prova più lunghi?'                      radio: 'prova_lunga" },
-      { testo: "Il TFR è mantenuto in azienda o trasferito?'       radio: 'tfr" },
-      { testo: "Fondo Interprofessionale per la formazione?'       radio: 'fondo_form" },
-      { testo: "Fondo Pensioni previsto? Quanti dipendenti?'       radio: 'fondo_pen", campo: 'f022' },
-    ]},
-    { sezione: 'Conflitti e Relazioni Sindacali', domande: [
-      { testo: "Sono presenti soggetti problematici?'              radio: 'soggetti_prob", campo: 'f023' },
-      { testo: "RSA/RSU nominate? Di quali OO.SS.?'               campo: 'f024" },
-      { testo: "È presente il codice disciplinare?'                radio: 'codice_disc" },
-      { testo: "Vi sono state vertenze in passato?'               radio: 'vertenze", campo: 'f025' },
-      { testo: "Conciliazioni sindacali attivate?'                 radio: 'conciliazioni" },
-      { testo: "Cosa fa lazienda per il clima aziendale?'        campo: 'f026" },
-      { testo: "Verifiche ispettive effettuate? Sanzioni?'         radio: 'ispezioni", campo: 'f027' },
-    ]},
-    { sezione: 'Bilateralità', domande: [
-      { testo: "Enti Bilaterali previsti? Importo mensile?'        campo: 'f028" },
-      { testo: "E.D.R. in alternativa allEnte Bilaterale?'      campo: 'f029" },
-      { testo: "Fondo Sanitario? Importo mensile?'                 campo: 'f030" },
-      { testo: "E.D.R. in alternativa al Fondo Sanitario?'        campo: 'f031" },
-      { testo: "Assistenza Contrattuale (W)? Importo mensile?'    campo: 'f032" },
-      { testo: "Servizi beneficiati dagli EE.BB.?'               campo: 'f033" },
-    ]},
-    { sezione: 'Orario di Lavoro', domande: [
-      { testo: "Orario settimanale e distribuzione'               campo: 'f034" },
-      { testo: "Picchi di produzione, stagionalità, turni?'       radio: 'picchi", campo: 'f035' },
-      { testo: "Forme di flessibilità previste?'                  campo: 'f036" },
-      { testo: "Esigenze e disponibilità dei lavoratori?'         campo: 'f037" },
-      { testo: "Periodi in cui si supera lorario ordinario?'    campo: 'f038" },
-      { testo: "Inadempienze o sanzioni sullorario?'           radio: 'sanzioni_orario", campo: 'f039' },
-    ]},
-    { sezione: 'Regolamento Aziendale', domande: [
-      { testo: "Ha il Regolamento Aziendale? È esposto?'          radio: 'reg_az" },
-      { testo: "Consapevole delle conseguenze senza Regolamento?' radio: 'consapevole_reg" },
-      { testo: "Sa che il Regolamento è personalizzabile?'        radio: 'reg_personalizzato" },
-      { testo: "Chiarezza delle regole interne?'                  campo: 'f040" },
-      { testo: "Difficoltà nella gestione interna?'              radio: 'difficolta_reg", campo: 'f041' },
-      { testo: "Sa dellObbligo di affissione?'                 radio: 'affissione_consap" },
-    ]},
-    { sezione: 'Salute e Sicurezza', domande: [
-      { testo: "Parere sugli obblighi di sicurezza sul lavoro?'  campo: 'f042" },
-      { testo: "Numero totale lavoratori (inclusi tutti)'         campo: 'f043" },
-      { testo: "Il DVR è stato redatto e aggiornato?'            radio: 'dvr" },
-      { testo: "Figure nominate (RSPP, RLS, Medico, ecc.)?'      campo: 'f044" },
-      { testo: "Formazione dei lavoratori effettuata?'           radio: 'form_sicurezza" },
-      { testo: "Lavoratori esposti a rischi particolari?'        radio: 'rischi_spec", campo: 'f045' },
-      { testo: "Costi relativi agli obblighi D.Lgs. 81/08?'     campo: 'f046" },
-      { testo: "Certificazioni ISO implementate?'                radio: 'iso", campo: 'f047' },
-      { testo: "Formazione aggiuntiva rispetto alla legge?'      radio: 'form_aggiuntiva" },
-      { testo: "Interventi su impianti previsti?'                radio: 'impianti" },
-      { testo: "Sorveglianza sanitaria e defibrillatore?'        campo: 'f048" },
-      { testo: "Buone prassi validate INAIL adottate?'           radio: 'buone_prassi" },
-    ]},
-    { sezione: 'Clima Aziendale', domande: [
-      { testo: "Descrizione dellattuale clima aziendale?'      campo: 'f049" },
-      { testo: "Obiettivi per migliorare il clima?'              campo: 'f050" },
-      { testo: "Sistemi di premio di risultato presenti?'        radio: 'premio_ris", campo: 'f051' },
-      { testo: "Obiettivi traducibili in parametri misurabili?'  campo: 'f052" },
-      { testo: "Come verrebbero percepiti i sistemi premianti?'  campo: 'f053" },
-      { testo: "Apertura a introdurre nuovi benefit?'            radio: 'benefit_nuovi" },
-    ]},
-    { sezione: 'Priorità Aziendali', domande: [
-      { testo: "Priorità numero 1' campo: 'f054" },
-      { testo: "Priorità numero 2' campo: 'f055" },
-      { testo: "Priorità numero 3' campo: 'f056" },
-      { testo: "Priorità numero 4' campo: 'f057" },
-      { testo: "Priorità numero 5' campo: 'f058" },
-      { testo: "Priorità numero 6' campo: 'f059" },
-    ]},
-  ];
-
-  // Build complete questionnaire view
-  function getRispostaRadio(name) {
-    return d.risposteRadio && d.risposteRadio[name] ? d.risposteRadio[name].toUpperCase() : null;
-  }
-
-  function getRispostaCampo(id) {
+  // Helper to get field value
+  function val(id) {
     if (!d.campi || !d.campi[id]) return null;
     const v = d.campi[id];
     return (typeof v === 'object' && v.risposta) ? v.risposta : (typeof v === 'string' ? v : null);
   }
 
-  // For old questionnaires - build a fallback showing all fields
-  function buildFallbackHtml() {
-    if (!d.campi) return '';
-    let html = '<div style="background:#fff8e1;border:1px solid #f59f00;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:.8rem;color:#666;">⚠️ Questo questionario è stato compilato con una versione precedente. Le risposte sono mostrate in formato semplificato.</div>';
-    Object.entries(d.campi).forEach(function([k,v]) {
-      const domanda = (typeof v === 'object' && v.domanda) ? v.domanda : k;
-      const risposta = (typeof v === 'object' && v.risposta) ? v.risposta : (typeof v === 'string' ? v : '');
-      if (!risposta) return;
-      html += '<div style="border-bottom:1px solid #f0f0f0;padding:8px 0;"><div style="font-size:.72rem;font-weight:600;color:#6b7a8d;text-transform:uppercase;margin-bottom:3px;">' + domanda + '</div><div style="font-size:.86rem;color:#1a2332;">' + risposta + '</div></div>';
-    });
-    if (d.risposteRadio) {
-      Object.entries(d.risposteRadio).forEach(function([k,v]) {
-        const label = k;
-        const color = v.toUpperCase()==='SI' ? '#27ae60' : v.toUpperCase()==='NO' ? '#CE2B37' : '#f59f00';
-        html += '<div style="border-bottom:1px solid #f0f0f0;padding:8px 0;display:flex;align-items:center;gap:8px;"><div style="font-size:.72rem;font-weight:600;color:#6b7a8d;text-transform:uppercase;">' + label + '</div><span style="background:'+color+';color:#fff;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:20px;">' + v.toUpperCase() + '</span></div>';
-      });
-    }
-    return html;
+  // Helper to get radio value
+  function radio(name) {
+    return d.risposteRadio && d.risposteRadio[name] ? d.risposteRadio[name] : null;
   }
 
-  function badgeRadio(val) {
-    if (!val) return '';
-    const color = val === 'SI' ? '#27ae60' : val === 'NO' ? '#CE2B37' : '#f59f00';
-    return `<span style="display:inline-block;background:${color};color:#fff;font-size:.7rem;font-weight:700;padding:2px 10px;border-radius:20px;margin-left:8px;">${val}</span>`;
+  // Badge for radio answer
+  function badge(v) {
+    if (!v) return '';
+    const colors = {
+      'si': '#27ae60', 'no': '#CE2B37',
+      'valutare': '#f59f00', 'forse': '#f59f00',
+      'rsa': '#0f507b', 'rsu': '#0f507b', 'nessuna': '#6b7a8d',
+      'cartacei': '#0f507b', 'elettronici': '#0f507b',
+      'azienda': '#0f507b', 'fondo': '#0f507b', 'inps': '#6b7a8d', 'misto': '#6b7a8d',
+      'si_aggiornato': '#27ae60', 'si_datato': '#f59f00',
+      'presente_attivato': '#27ae60', 'presente_non_attivato': '#f59f00', 'assente': '#CE2B37',
+      'si_esposto': '#27ae60', 'si_non_esposto': '#f59f00',
+      'parziale': '#f59f00',
+    };
+    const color = colors[v.toLowerCase()] || '#6b7a8d';
+    const label = v.replace(/_/g,' ').toUpperCase();
+    return `<span style="display:inline-block;background:${color};color:#fff;font-size:.72rem;font-weight:700;padding:3px 12px;border-radius:20px;">${label}</span>`;
   }
 
-  let sezioniHtml = '';
-  QUESTIONARIO.forEach(function(sez) {
-    let righe = '';
-    sez.domande.forEach(function(dom) {
-      const radio   = dom.radio ? getRispostaRadio(dom.radio) : null;
-      const testo   = dom.campo ? getRispostaCampo(dom.campo) : null;
-      if (!radio && !testo) return; // skip unanswered
-      righe += `<div style="border-bottom:1px solid #f0f0f0;padding:10px 0;">
-        <div style="font-size:.75rem;font-weight:600;color:#6b7a8d;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;">${dom.testo}</div>
-        <div style="font-size:.88rem;color:#1a2332;line-height:1.5;">
-          ${radio ? badgeRadio(radio) : ''}
-          ${testo ? `<span style="display:block;margin-top:${radio ? '6px' : '0'}">${testo}</span>` : ''}
-        </div>
-      </div>`;
-    });
-    if (!righe) return;
-    sezioniHtml += `
-      <div style="margin-bottom:20px;">
-        <div style="background:#0f507b;color:#fff;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:7px 14px;border-radius:6px;margin-bottom:8px;">${sez.sezione}</div>
-        ${righe}
-      </div>`;
-  });
+  // Build a row: domanda + radio badge + testo
+  function riga(domanda, radioName, campoId) {
+    const r = radioName ? radio(radioName) : null;
+    const t = campoId ? val(campoId) : null;
+    if (!r && !t) return '';
+    return `<div style="padding:10px 0;border-bottom:1px solid #f0f0f0;">
+      <div style="font-size:.78rem;font-weight:600;color:#6b7a8d;margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em;">${domanda}</div>
+      ${r ? `<div style="margin-bottom:${t?'6px':'0'}">${badge(r)}</div>` : ''}
+      ${t ? `<div style="font-size:.88rem;color:#1a2332;line-height:1.5;">${t}</div>` : ''}
+    </div>`;
+  }
 
-  document.getElementById('modalTitle').textContent = d.azienda || 'Questionario';
-  document.getElementById('modalBody').innerHTML = `
+  // Build only-text row
+  function rigaTesto(domanda, campoId) {
+    const t = val(campoId);
+    if (!t) return '';
+    return `<div style="padding:10px 0;border-bottom:1px solid #f0f0f0;">
+      <div style="font-size:.78rem;font-weight:600;color:#6b7a8d;margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em;">${domanda}</div>
+      <div style="font-size:.88rem;color:#1a2332;line-height:1.5;">${t}</div>
+    </div>`;
+  }
+
+  function sezione(titolo, righe) {
+    const contenuto = righe.join('');
+    if (!contenuto) return '';
+    return `<div style="margin-bottom:20px;">
+      <div style="background:#0f507b;color:#fff;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:8px 14px;border-radius:6px;margin-bottom:4px;">${titolo}</div>
+      ${contenuto}
+    </div>`;
+  }
+
+  const html = `
     <div class="detail-section">
       <h4>${BUILDING} Dati Azienda</h4>
       <div class="detail-grid">
@@ -671,14 +512,144 @@ window.openModal = async id => {
         <div class="detail-item"><div class="di-label">N° Dipendenti</div><div class="di-value">${d.nDipendenti||'—'}</div></div>
         <div class="detail-item"><div class="di-label">Delegato</div><div class="di-value">${d.delegato||'—'}</div></div>
         <div class="detail-item"><div class="di-label">Data invio</div><div class="di-value">${dataStr}</div></div>
-        <div class="detail-item"><div class="di-label">Consenso 2-A</div><div class="di-value">${d.consenso2A?'Sì':'No'}</div></div>
+        <div class="detail-item"><div class="di-label">Stato</div><div class="di-value">${d.stato==='bozza'?'⏳ Bozza':'✅ Completato'}</div></div>
       </div>
     </div>
+
     <div class="detail-section">
-      <h4>${FILE} Risposte al Questionario</h4>
-      ${sezioniHtml || buildFallbackHtml()}
+      <h4><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Risposte al Questionario</h4>
+
+      ${sezione('Consulente del Lavoro', [
+        rigaTesto('Studio', 'f011'),
+        rigaTesto('Riferimento', 'f012'),
+        rigaTesto('Recapito telefonico', 'f013'),
+        rigaTesto('Indirizzo email', 'f014'),
+      ])}
+
+      ${sezione('CCNL', [
+        rigaTesto('Quale CCNL applica lazienda?', 'f001'),
+        rigaTesto('Codice CNEL del CCNL', 'f002'),
+        rigaTesto('Scadenza del CCNL', 'f003'),
+        rigaTesto('Sindacati Lavoratori firmatari', 'f004'),
+        rigaTesto('Sindacati Datoriali firmatari', 'f005'),
+        rigaTesto("L'azienda e associata? A chi?", 'f006'),
+        riga('In passato avete applicato altri CCNL?', 'altri_ccnl', 'f007'),
+        rigaTesto('Lavoratori iscritti a OO.SS.? Quali?', 'f008'),
+        riga('Sono presenti RSA o RSU?', 'rsa_rsu', 'f009'),
+        rigaTesto('Sono state indette assemblee? Quando?', 'f010'),
+        riga('Accordi di II Livello?', 'acc_2liv', null),
+        riga('Accordi di Prossimita?', 'acc_prox', null),
+        rigaTesto('Forme di Welfare Aziendale?', 'f015'),
+        rigaTesto('Inquadramento INPS (CSC)', 'f016'),
+        rigaTesto('Inquadramento INAIL (PAT)', 'f017'),
+        riga('Sede Legale e Operativa coincidono?', 'sedi', null),
+        rigaTesto('Codice/i ATECO', 'f018'),
+      ])}
+
+      ${sezione('Aspetti Economici', [
+        riga('Utilizza buoni pasto?', 'buoni_pasto', null),
+        riga('Utilizza buoni welfare / fringe benefit?', 'welfare_buoni', 'f019'),
+        riga('Eroga superminimi assorbibili?', 'superminimi', null),
+        rigaTesto('Importo Totale Annuale superminimi', 'f020'),
+        rigaTesto('Eroga premi in busta paga? Criteri?', 'f021'),
+        riga('Si effettuano ore di lavoro straordinario?', 'straordinario', 'f022'),
+        riga('I dipendenti utilizzano tutti i permessi retribuiti?', 'permessi', 'f023'),
+      ])}
+
+      ${sezione('Organizzazione e Flessibilita', [
+        rigaTesto('Ci sono contratti part-time?', 'f024'),
+        riga('Problemi con limiti contratti a termine?', 'limiti_termine', 'f025'),
+        riga('Periodi di prova piu lunghi?', 'prova_lunga', null),
+        riga('Il TFR - in azienda o trasferito?', 'tfr', null),
+        riga('Fondo Interprofessionale per la formazione?', 'fondo_form', null),
+        riga('Fondo Pensioni previsto?', 'fondo_pen', 'f026'),
+      ])}
+
+      ${sezione('Conflitti e Relazioni Sindacali', [
+        riga('Sono presenti soggetti problematici?', 'soggetti_prob', 'f027'),
+        rigaTesto('RSA/RSU nominate? Di quali OO.SS.?', 'f028'),
+        riga('E presente il codice disciplinare?', 'codice_disc', null),
+        riga('Vi sono state vertenze in passato?', 'vertenze', 'f029'),
+        riga('Conciliazioni sindacali attivate?', 'conciliazioni', null),
+        rigaTesto('Cosa fa lazienda per il clima aziendale?', 'f030'),
+        riga('Verifiche ispettive effettuate? Sanzioni?', 'ispezioni', 'f031'),
+      ])}
+
+      ${sezione('Bilateralita', [
+        rigaTesto('Enti Bilaterali previsti? Importo mensile?', 'f032'),
+        rigaTesto('E.D.R. in alternativa allEnte Bilaterale?', 'f033'),
+        rigaTesto('Fondo Sanitario? Importo mensile?', 'f034'),
+        rigaTesto('E.D.R. in alternativa al Fondo Sanitario?', 'f035'),
+        rigaTesto('Assistenza Contrattuale (W)? Importo mensile?', 'f036'),
+        rigaTesto('Servizi beneficiati dagli EE.BB.?', 'f037'),
+      ])}
+
+      ${sezione('Orario di Lavoro', [
+        rigaTesto('Orario settimanale e distribuzione', 'f038'),
+        riga('Picchi di produzione, stagionalita, turni?', 'picchi', 'f039'),
+        rigaTesto('Forme di flessibilita previste?', 'f040'),
+        rigaTesto('Esigenze e disponibilita dei lavoratori?', 'f041'),
+        rigaTesto('Periodi in cui si supera lorario ordinario?', 'f042'),
+        riga('Inadempienze o sanzioni sullorario?', 'sanzioni_orario', 'f043'),
+      ])}
+
+      ${sezione('Regolamento Aziendale', [
+        riga('Ha il Regolamento Aziendale? E esposto?', 'reg_az', null),
+        riga('Consapevole delle conseguenze senza Regolamento?', 'consapevole_reg', null),
+        riga('Sa che il Regolamento e personalizzabile?', 'reg_personalizzato', null),
+        rigaTesto('Chiarezza delle regole interne?', 'f044'),
+        riga('Difficolta nella gestione interna?', 'difficolta_reg', 'f045'),
+        riga('Obbligo di affissione in ogni unita produttiva?', 'affissione_consap', null),
+      ])}
+
+      ${sezione('Salute e Sicurezza', [
+        rigaTesto('Parere sugli obblighi di sicurezza?', 'f046'),
+        rigaTesto('Numero totale lavoratori', 'f047'),
+        riga('Il DVR e stato redatto e aggiornato?', 'dvr', null),
+        rigaTesto('Figure nominate (RSPP, RLS, Medico, ecc.)?', 'f048'),
+        riga('Formazione dei lavoratori effettuata?', 'form_sicurezza', null),
+        riga('Lavoratori esposti a rischi particolari?', 'rischi_spec', 'f049'),
+        rigaTesto('Costi relativi agli obblighi D.Lgs. 81/08?', 'f050'),
+        riga('Certificazioni ISO implementate?', 'iso', 'f051'),
+        riga('Formazione aggiuntiva rispetto alla legge?', 'form_aggiuntiva', null),
+        riga('Interventi su impianti previsti?', 'impianti', null),
+        rigaTesto('Sorveglianza sanitaria e defibrillatore?', 'f052'),
+        riga('Buone prassi validate INAIL adottate?', 'buone_prassi', null),
+      ])}
+
+      ${sezione('Clima Aziendale', [
+        rigaTesto('Descrizione dellattuale clima aziendale?', 'f053'),
+        rigaTesto('Obiettivi per migliorare il clima?', 'f054'),
+        riga('Sistemi di premio di risultato presenti?', 'premio_ris', 'f055'),
+        rigaTesto('Obiettivi traducibili in parametri misurabili?', 'f056'),
+        rigaTesto('Come verrebbero percepiti i sistemi premianti?', 'f057'),
+        riga('Apertura a introdurre nuovi benefit?', 'benefit_nuovi', null),
+      ])}
+
+      ${sezione('Priorita Aziendali', [
+        rigaTesto('Priorita 1', 'f058'),
+        rigaTesto('Priorita 2', 'f059'),
+        rigaTesto('Priorita 3', 'f060'),
+        rigaTesto('Priorita 4', 'f061'),
+        rigaTesto('Priorita 5', 'f062'),
+        rigaTesto('Priorita 6', 'f063'),
+      ])}
+
+      ${sezione('Privacy e Consensi', [
+        `<div style="padding:10px 0;border-bottom:1px solid #f0f0f0;">
+          <div style="font-size:.78rem;font-weight:600;color:#6b7a8d;margin-bottom:6px;text-transform:uppercase;">Consenso 2-A (obbligatorio)</div>
+          <div>${badge(d.consenso2A ? 'si' : 'no')}</div>
+        </div>`,
+        `<div style="padding:10px 0;">
+          <div style="font-size:.78rem;font-weight:600;color:#6b7a8d;margin-bottom:6px;text-transform:uppercase;">Consenso 2-B (facoltativo)</div>
+          <div>${badge(d.consenso2B ? 'si' : 'no')}</div>
+        </div>`,
+      ])}
     </div>
   `;
+
+  document.getElementById('modalTitle').textContent = d.azienda || 'Questionario';
+  document.getElementById('modalBody').innerHTML = html;
   document.getElementById('modalOverlay').classList.add('open');
 };
 
