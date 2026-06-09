@@ -668,50 +668,40 @@ window.deleteDoc = async () => {
 };
 window.closeModalOutside = e  => { if(e.target===document.getElementById('modalOverlay')) closeModal(); };
 window.printModal = function() {
-  var titolo  = document.getElementById('modalTitle').textContent || 'Questionario';
+  var titolo   = document.getElementById('modalTitle').textContent || 'Questionario';
   var bodyHtml = document.getElementById('modalBody').innerHTML;
 
+  var css = [
+    '* { box-sizing:border-box; margin:0; padding:0; }',
+    'body { font-family:Montserrat,Arial,sans-serif; padding:28px; color:#1a2332; }',
+    '.header { background:#0f507b; color:#fff; padding:18px 24px; margin-bottom:24px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }',
+    '.header h1 { font-size:1.2rem; font-weight:700; margin-bottom:4px; }',
+    '.header p { font-size:.82rem; opacity:.8; }',
+    '.detail-section { margin-bottom:20px; }',
+    '.detail-section h4 { font-size:.78rem; font-weight:700; color:#0f507b; text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px; padding-bottom:6px; border-bottom:2px solid #e2e6ed; }',
+    '.detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }',
+    '.detail-item { background:#f7f8fa; border-radius:7px; padding:9px 12px; }',
+    '.di-label { font-size:.66rem; color:#6b7a8d; font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin-bottom:2px; }',
+    '.di-value { font-size:.85rem; color:#1a2332; font-weight:500; line-height:1.5; word-break:break-word; }',
+    '.detail-item.full { grid-column:1/-1; }',
+  ].join('\n');
+
+  var html = '<!DOCTYPE html><html lang="it"><head>'
+    + '<meta charset="UTF-8"/>'
+    + '<title>' + titolo + ' - Questionario Contrattuale</title>'
+    + '<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">'
+    + '<style>' + css + '</style>'
+    + '</head><body>'
+    + '<div class="header"><h1>' + titolo + '</h1><p>Questionario Contrattuale - Fabbrica Lavoro PMI</p></div>'
+    + bodyHtml
+    + '</body></html>';
+
   var win = window.open('', '_blank', 'width=900,height=700');
-  win.document.write(`<!DOCTYPE html>
-<html lang="it">
-<head>
-  <meta charset="UTF-8"/>
-  <title>${titolo} – Questionario Contrattuale</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Montserrat, Arial, sans-serif; padding: 28px; color: #1a2332; }
-    .header { background: #0f507b; color: #fff; padding: 18px 24px; margin-bottom: 24px; border-radius: 8px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .header h1 { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
-    .header p { font-size: .82rem; opacity: .8; }
-    .detail-section { margin-bottom: 20px; }
-    .detail-section h4 { font-size: .78rem; font-weight: 700; color: #0f507b; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid #e2e6ed; display: flex; align-items: center; gap: 6px; }
-    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .detail-item { background: #f7f8fa; border-radius: 7px; padding: 9px 12px; }
-    .di-label { font-size: .66rem; color: #6b7a8d; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 2px; }
-    .di-value { font-size: .85rem; color: #1a2332; font-weight: 500; line-height: 1.5; word-break: break-word; }
-    .detail-item.full { grid-column: 1/-1; }
-    @media print {
-      body { padding: 16px; }
-      .header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <h1>${titolo}</h1>
-    <p>Questionario Contrattuale – Fabbrica Lavoro PMI</p>
-  </div>
-  ${bodyHtml}
-  <script>
-    window.onload = function() {
-      window.print();
-      setTimeout(function() { window.close(); }, 1500);
-    };
-  </script>
-</body>
-</html>`);
+  win.document.write(html);
   win.document.close();
+  win.onload = function() {
+    win.print();
+  };
 };
 
 // CSV EXPORT
