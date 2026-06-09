@@ -708,7 +708,16 @@ function goTo(n) {
     var savedCampi = {};
     document.querySelectorAll('input[type="text"], input[type="email"], input[type="date"], textarea').forEach(function(el) {
       if (el.id && el.value.trim()) {
-        savedCampi[el.id] = el.value.trim();
+        // Find the label text for this input
+        var labelEl = el.closest('.field-group') ? el.closest('.field-group').querySelector('label') : null;
+        var domanda = '';
+        if (labelEl) {
+          var clone = labelEl.cloneNode(true);
+          var qn = clone.querySelector('.q-num');
+          if (qn) qn.parentNode.removeChild(qn);
+          domanda = clone.innerText.trim().replace(/\s+/g, ' ');
+        }
+        savedCampi[el.id] = { domanda: domanda, risposta: el.value.trim() };
       }
     });
     var savedRadios = {};
@@ -842,7 +851,11 @@ function resumeDraft() {
     if (data.campi) {
       Object.keys(data.campi).forEach(function(id) {
         var el = document.getElementById(id);
-        if (el) el.value = data.campi[id];
+        if (el) {
+          var val = data.campi[id];
+          // Handle both old format (string) and new format ({domanda, risposta})
+          el.value = (typeof val === 'object' && val.risposta) ? val.risposta : val;
+        }
       });
     }
 
@@ -874,7 +887,15 @@ function collectFormData() {
   var campi = {};
   document.querySelectorAll('input[type="text"], input[type="email"], input[type="date"], textarea').forEach(function(el) {
     if (el.id && el.value.trim()) {
-      campi[el.id] = el.value.trim();
+      var labelEl = el.closest('.field-group') ? el.closest('.field-group').querySelector('label') : null;
+      var domanda = '';
+      if (labelEl) {
+        var clone = labelEl.cloneNode(true);
+        var qn = clone.querySelector('.q-num');
+        if (qn) qn.parentNode.removeChild(qn);
+        domanda = clone.innerText.trim().replace(/\s+/g, ' ');
+      }
+      campi[el.id] = { domanda: domanda, risposta: el.value.trim() };
     }
   });
   return {
