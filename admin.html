@@ -128,10 +128,9 @@ tbody td.muted{color:var(--muted);font-size:.76rem;}
 .detail-item.full{grid-column:1/-1;}
 
 @media print{
-  header,.filter-bar,.toolbar,.stats-row,.search-wrap,.table-wrap,.modal-overlay,.mbtn,.mbtn-close,footer{display:none!important;}
-  .modal{max-height:none!important;overflow:visible!important;box-shadow:none!important;border-radius:0!important;}
-  .modal-header{border-radius:0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  .modal-overlay{display:flex!important;position:relative!important;background:none!important;padding:0!important;}
+  header,.filter-bar,.toolbar,.stats-row,.search-wrap,.table-wrap,.mbtn,.mbtn-close,footer{display:none!important;}
+  body > *:not(#printArea) { display: none !important; }
+  #printArea { display: block !important; }
 }
 </style>
 </head>
@@ -613,6 +612,26 @@ window.openModal = async id => {
     return (typeof v === 'object' && v.risposta) ? v.risposta : (typeof v === 'string' ? v : null);
   }
 
+  // For old questionnaires - build a fallback showing all fields
+  function buildFallbackHtml() {
+    if (!d.campi) return '';
+    let html = '<div style="background:#fff8e1;border:1px solid #f59f00;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:.8rem;color:#666;">⚠️ Questo questionario è stato compilato con una versione precedente. Le risposte sono mostrate in formato semplificato.</div>';
+    Object.entries(d.campi).forEach(function([k,v]) {
+      const domanda = (typeof v === 'object' && v.domanda) ? v.domanda : k;
+      const risposta = (typeof v === 'object' && v.risposta) ? v.risposta : (typeof v === 'string' ? v : '');
+      if (!risposta) return;
+      html += '<div style="border-bottom:1px solid #f0f0f0;padding:8px 0;"><div style="font-size:.72rem;font-weight:600;color:#6b7a8d;text-transform:uppercase;margin-bottom:3px;">' + domanda + '</div><div style="font-size:.86rem;color:#1a2332;">' + risposta + '</div></div>';
+    });
+    if (d.risposteRadio) {
+      Object.entries(d.risposteRadio).forEach(function([k,v]) {
+        const label = k;
+        const color = v.toUpperCase()==='SI' ? '#27ae60' : v.toUpperCase()==='NO' ? '#CE2B37' : '#f59f00';
+        html += '<div style="border-bottom:1px solid #f0f0f0;padding:8px 0;display:flex;align-items:center;gap:8px;"><div style="font-size:.72rem;font-weight:600;color:#6b7a8d;text-transform:uppercase;">' + label + '</div><span style="background:'+color+';color:#fff;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:20px;">' + v.toUpperCase() + '</span></div>';
+      });
+    }
+    return html;
+  }
+
   function badgeRadio(val) {
     if (!val) return '';
     const color = val === 'SI' ? '#27ae60' : val === 'NO' ? '#CE2B37' : '#f59f00';
@@ -657,7 +676,7 @@ window.openModal = async id => {
     </div>
     <div class="detail-section">
       <h4>${FILE} Risposte al Questionario</h4>
-      ${sezioniHtml || '<p style="color:#6b7a8d;font-size:.85rem;">Nessuna risposta compilata.</p>'}
+      ${sezioniHtml || buildFallbackHtml()}
     </div>
   `;
   document.getElementById('modalOverlay').classList.add('open');
@@ -679,7 +698,32 @@ window.deleteDoc = async () => {
   }
 };
 window.closeModalOutside = e  => { if(e.target===document.getElementById('modalOverlay')) closeModal(); };
-window.printModal        = () => window.print();
+window.printModal = function() {
+  // Remove old print area if exists
+  var old = document.getElementById('printArea');
+  if (old) old.remove();
+
+  // Create print area with modal content
+  var area = document.createElement('div');
+  area.id = 'printArea';
+  area.style.cssText = 'display:none;font-family:Montserrat,Arial,sans-serif;padding:20px;';
+
+  var header = document.createElement('div');
+  header.style.cssText = 'background:#0f507b;color:#fff;padding:16px 20px;margin-bottom:20px;border-radius:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact;';
+  header.innerHTML = '<strong style="font-size:1.1rem;">' + (document.getElementById('modalTitle').textContent || 'Questionario') + '</strong><br><span style="font-size:.8rem;opacity:.8;">Questionario Contrattuale – Fabbrica Lavoro PMI</span>';
+
+  var body = document.createElement('div');
+  body.innerHTML = document.getElementById('modalBody').innerHTML;
+
+  area.appendChild(header);
+  area.appendChild(body);
+  document.body.appendChild(area);
+
+  window.print();
+
+  // Restore after print
+  setTimeout(function() { area.remove(); }, 1000);
+};
 
 // CSV EXPORT
 window.quickDelete = async (id, nome) => {
