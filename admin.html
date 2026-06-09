@@ -435,6 +435,7 @@ let currentDocId = null;
 window.openModal = async id => {
   const d = allDocs.find(x => x.id === id);
   if (!d) return;
+  currentDocId = id;
   if (!d.esaminato) await updateDoc(doc(db,"questionari",id), {esaminato:true});
   const dataStr = d.inviatoIl?.toDate?.() ? d.inviatoIl.toDate().toLocaleString('it-IT') : '—';
   const BUILDING = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="1"/><path d="M9 3v18M15 3v18M2 9h20M2 15h20"/></svg>';
